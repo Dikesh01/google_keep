@@ -2,9 +2,11 @@ import React, { useState, useRef, useContext } from 'react'
 import Box from '@mui/material/Box';
 import { styled } from "@mui/material/styles";
 import TextField from '@mui/material/TextField';
+import { v4 as uuid } from 'uuid';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
 import { DataContext } from '../../context/DataProvider';
+
 
 
 const Container = styled(Box)`
@@ -27,7 +29,7 @@ const Container = styled(Box)`
 function Form() {
 
     const [ showTextField, setShowTextField ] = useState(false);
-    const [addNote, setAddNote] = useState(noteObj);
+    const [addNote, setAddNote] = useState({...noteObj, id:uuid()});
 
     const containerRef = useRef();
     const { notes, setNotes } = useContext(DataContext);
@@ -37,10 +39,28 @@ function Form() {
         containerRef.current.style.minHeight = '70px'
     }
 
+    let createdNote;
     function handleClickAway(){
         setShowTextField(false);
         containerRef.current.style.minHeight = '30px'
+
+        setNotes(addNote);
+        createdNote={...addNote, id:'', heading:'', text:''};
+        setAddNote(createdNote);
     }
+
+   
+    function onHeadingChange(e){
+        createdNote = {...addNote, heading:e.target.value}
+        setAddNote(createdNote);
+    }
+
+    function onTextChange(e){
+        createdNote = {...addNote, text:e.target.value}
+        setAddNote(createdNote);
+    }
+
+    // console.log(notes);
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
@@ -51,6 +71,9 @@ function Form() {
                     variant='standard'
                     InputProps={{ disableUnderline: true}}
                     style={{ marginBottom:10}}
+                    value={addNote.heading}
+                    onChange={(e)=>onHeadingChange(e)}
+
                 />
             }
             <TextField 
@@ -60,6 +83,9 @@ function Form() {
                 variant='standard'
                 InputProps={{ disableUnderline: true}}
                 onClick={onTextAreaClick}
+                value={addNote.text}
+                onChange={(e)=>onTextChange(e)}
+
             />
         </Container>
     </ClickAwayListener>
