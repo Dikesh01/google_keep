@@ -43,10 +43,11 @@ function Form() {
     function handleClickAway(){
         setShowTextField(false);
         containerRef.current.style.minHeight = '30px'
+        setAddNote({ ...noteObj, id: uuid() })
 
-        setNotes(addNote);
-        createdNote={...addNote, id:'', heading:'', text:''};
-        setAddNote(createdNote);
+        if( addNote.heading || addNote.text ){
+            setNotes(preNote=> [addNote,...preNote]);
+        }
     }
 
    
@@ -73,7 +74,6 @@ function Form() {
                     style={{ marginBottom:10}}
                     value={addNote.heading}
                     onChange={(e)=>onHeadingChange(e)}
-
                 />
             }
             <TextField 
